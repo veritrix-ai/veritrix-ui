@@ -1,0 +1,4 @@
+allowBuilds:
+  '@clerk/shared': set this to true or false
+overrides:
+  resolve: 1.22.11
