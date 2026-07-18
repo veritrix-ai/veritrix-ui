@@ -58,20 +58,36 @@ function AuthTokenBridge({ children }: { children: ReactNode }) {
 
     let cancelled = false;
 
+    async function getTokenSafely() {
+      let timeoutId: number | undefined;
+      try {
+        return await Promise.race([
+          getToken(),
+          new Promise<null>((resolve) => {
+            timeoutId = window.setTimeout(() => resolve(null), 1_000);
+          }),
+        ]);
+      } catch {
+        return null;
+      } finally {
+        if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      }
+    }
+
     async function waitForToken() {
       if (!isSignedIn) {
         if (!cancelled) setTokenReady(true);
         return;
       }
 
-      for (let attempt = 0; attempt < 20; attempt++) {
-        const token = await getToken();
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const token = await getTokenSafely();
         if (cancelled) return;
         if (token) {
           setTokenReady(true);
           return;
         }
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
       if (!cancelled) setTokenReady(true);
@@ -155,7 +171,15 @@ function AuthenticatedWorkspace({ children }: { children: ReactNode }) {
   if (!isLoaded || (isSignedIn && loading)) return <WorkspaceLoading />;
 
   if (error && isBackendUnavailable(error)) {
-    return <BackendUnavailable fullPage onRetry={() => void load()} />;
+    return (
+      <BackendUnavailable
+        fullPage
+        title="We're getting your workspace ready"
+        message="The data service is temporarily unavailable or waking from sleep. This page will reconnect automatically—there is no need to sign in again."
+        onRetry={() => void load()}
+        autoRetrySeconds={8}
+      />
+    );
   }
 
   if (error) {

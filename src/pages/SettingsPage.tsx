@@ -75,6 +75,7 @@ export function SettingsPage() {
         {!loading && !error && organization && (
           <SettingsView
             orgId={orgId}
+            clerkOrganizationId={workspace.clerk_org_id}
             organization={organization}
             members={members}
             invites={invites}

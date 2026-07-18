@@ -185,6 +185,7 @@ export interface MeResponse {
   clerk_user_id: string;
   email: string;
   org_id: string | null;
+  clerk_org_id: string | null;
   org_name: string | null;
   projects: ProjectSummary[];
   api_keys: ApiKeySummary[];
@@ -194,4 +195,13 @@ export interface MeResponse {
 export interface OnboardingRequest {
   org_name: string;
   email?: string;
+  clerk_org_id?: string;
+  usage: "hobby" | "work" | "help";
+  company_size: string;
+  building_description: string;
+  stage: string;
+  heard_from: string;
+  frameworks: string[];
+  providers: string[];
+  help_goals: string[];
 }

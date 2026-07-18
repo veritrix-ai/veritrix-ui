@@ -112,6 +112,19 @@ Path aliases: `@/` maps to `src/` (configured in `vite.config.ts` and `tsconfig.
 | `/sign-up` | Clerk sign-up |
 | `/welcome` | Post-signup onboarding |
 
+## Clerk organization billing
+
+Billing is owned by Clerk Organizations. In the Clerk Dashboard:
+
+1. Enable **Billing for Organizations**.
+2. Use Clerk's development payment gateway for the development instance.
+3. Create publicly available organization plans with the slugs `hobby` and `pro`.
+4. Add plan features and prices in Clerk; the frontend reads them from Clerk's pricing table.
+5. Connect the production Clerk instance to the production Stripe account.
+
+Clerk is the billing system of record. Stripe is connected through Clerk only; the app does not
+create Stripe Checkout or Customer Portal sessions.
+
 ## Production build
 
 ```bash

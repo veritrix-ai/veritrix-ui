@@ -5,6 +5,7 @@ import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RequireProvisioned } from "@/components/auth/RequireProvisioned";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { WorkspaceProvider } from "@/components/workspace/WorkspaceProvider";
+import { getClerkAppearance, useDarkTheme } from "@/lib/clerk-theme";
 import { isDesignMode } from "@/lib/design-mode";
 import { LoginPage } from "@/pages/LoginPage";
 import { GetStartedPage } from "@/pages/GetStartedPage";
@@ -61,6 +62,8 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const isDarkTheme = useDarkTheme();
+
   if (isDesignMode()) {
     return <AppRoutes />;
   }
@@ -84,6 +87,7 @@ export default function App() {
       signInFallbackRedirectUrl="/projects"
       signUpFallbackRedirectUrl="/welcome"
       afterSignOutUrl="/sign-in"
+      appearance={getClerkAppearance(isDarkTheme)}
     >
       <AppRoutes />
     </ClerkProvider>

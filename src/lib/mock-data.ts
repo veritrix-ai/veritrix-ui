@@ -21,6 +21,7 @@ export function getDesignModeWorkspace(): MeResponse {
     clerk_user_id: "design-user",
     email: MOCK_CURRENT_USER_EMAIL,
     org_id: DEMO_ORG_ID,
+    clerk_org_id: null,
     org_name: mockOrganization.name,
     provisioned: true,
     projects: [{ id: "22222222-2222-2222-2222-222222222222", name: "Default Project" }],

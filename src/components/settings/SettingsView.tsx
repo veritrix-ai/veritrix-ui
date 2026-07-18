@@ -48,6 +48,7 @@ const VALID_TABS = new Set<SettingsTab>(["general", "members", "api-keys", "bill
 
 interface SettingsViewProps {
   orgId: string;
+  clerkOrganizationId?: string | null;
   organization: OrganizationDetail;
   members: OrgMember[];
   invites: OrgInvite[];
@@ -79,6 +80,7 @@ function roleBadgeClass(role: OrgRole): string {
 
 export function SettingsView({
   orgId,
+  clerkOrganizationId,
   organization,
   members: initialMembers,
   invites: initialInvites,
@@ -488,6 +490,8 @@ export function SettingsView({
 
         <TabsContent value="billing">
           <BillingSettingsPanel
+            orgId={orgId}
+            clerkOrganizationId={clerkOrganizationId}
             organizationName={savedName}
             billingEmail={currentUserEmail}
           />

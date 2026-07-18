@@ -14,7 +14,7 @@ export function RequireProvisioned() {
   }
 
   if (workspace.provisioned && location.pathname === "/welcome") {
-    return <Navigate to="/get-started" replace />;
+    return <Navigate to="/projects" replace />;
   }
 
   return <Outlet />;

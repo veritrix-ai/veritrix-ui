@@ -10,8 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.61.3",
-    "@clerk/react": "^6.12.2",
+    "@clerk/react": "^6.12.5",
     "@lobehub/icons": "^5.10.1",
     "@radix-ui/react-avatar": "^1.2.2",
     "@radix-ui/react-dropdown-menu": "^2.1.20",

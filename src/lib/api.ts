@@ -19,6 +19,7 @@ import type {
   OrgInvite,
   OrgMember,
   OrgMembersResponse,
+  ProjectSummary,
   SpanStatus,
   TraceDetail,
   TraceListResponse,
@@ -26,6 +27,8 @@ import type {
 } from "@/lib/types";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const API_TIMEOUT_MS = 15_000;
+const AUTH_TOKEN_TIMEOUT_MS = 5_000;
 
 type TokenProvider = () => Promise<string | null>;
 
@@ -35,16 +38,32 @@ export function configureApiAuth(getToken: TokenProvider) {
   tokenProvider = getToken;
 }
 
+async function getTokenWithDeadline(): Promise<string | null> {
+  let timeoutId: number | undefined;
+  try {
+    return await Promise.race([
+      tokenProvider(),
+      new Promise<null>((resolve) => {
+        timeoutId = window.setTimeout(() => resolve(null), AUTH_TOKEN_TIMEOUT_MS);
+      }),
+    ]);
+  } catch {
+    return null;
+  } finally {
+    if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  }
+}
+
 async function getAuthHeaders(): Promise<HeadersInit> {
   if (isDesignMode()) {
     return { "Content-Type": "application/json" };
   }
 
-  let token = await tokenProvider();
+  let token = await getTokenWithDeadline();
   // Brief retry — Clerk can return null for a tick right after sign-in.
   if (!token) {
     await new Promise((resolve) => setTimeout(resolve, 100));
-    token = await tokenProvider();
+    token = await getTokenWithDeadline();
   }
   if (!token) {
     throw new ApiError("Missing authentication token", 401);
@@ -58,18 +77,25 @@ async function getAuthHeaders(): Promise<HeadersInit> {
 
 async function fetchApi<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = await getAuthHeaders();
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
   let response: Response;
   try {
     response = await fetch(`${API_URL}${path}`, {
       ...init,
+      signal: controller.signal,
       headers: {
         ...headers,
         ...init?.headers,
       },
     });
   } catch {
-    throw new BackendUnavailableError();
+    throw new BackendUnavailableError(
+      "The API is taking longer than expected. It may still be waking up.",
+    );
+  } finally {
+    window.clearTimeout(timeout);
   }
 
   if (!response.ok) {
@@ -106,6 +132,32 @@ export async function provisionAccount(body: OnboardingRequest): Promise<MeRespo
   return fetchApi<MeResponse>("/v1/onboarding", {
     method: "POST",
     body: JSON.stringify(body),
+  });
+}
+
+export async function renameProject(
+  orgId: string,
+  projectId: string,
+  name: string,
+): Promise<ProjectSummary> {
+  if (isDesignMode()) return { id: projectId, name };
+  const search = new URLSearchParams({ org_id: orgId });
+  return fetchApi<ProjectSummary>(`/v1/projects/${projectId}?${search.toString()}`, {
+    method: "PATCH",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function deleteProject(
+  orgId: string,
+  projectId: string,
+  confirmName: string,
+): Promise<void> {
+  if (isDesignMode()) return;
+  const search = new URLSearchParams({ org_id: orgId });
+  await fetchApi<void>(`/v1/projects/${projectId}?${search.toString()}`, {
+    method: "DELETE",
+    body: JSON.stringify({ confirm_name: confirmName }),
   });
 }
 
@@ -167,6 +219,17 @@ export async function updateOrganization(
   return fetchApi<OrganizationDetail>(`/v1/organization?${orgQuery(orgId)}`, {
     method: "PATCH",
     body: JSON.stringify({ name }),
+  });
+}
+
+export async function linkClerkOrganization(
+  orgId: string,
+  clerkOrgId: string,
+): Promise<void> {
+  if (isDesignMode()) return;
+  await fetchApi<void>(`/v1/organization/clerk-link?${orgQuery(orgId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ clerk_org_id: clerkOrgId }),
   });
 }
 
