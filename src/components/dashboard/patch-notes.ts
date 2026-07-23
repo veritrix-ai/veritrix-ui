@@ -67,4 +67,4 @@ export const PATCH_NOTES: PatchNoteEntry[] = [
   },
 ];
 
-export const PATCH_NOTES_CHANGELOG_URL = "https://docs.veritrix.ai/changelog";
+export const PATCH_NOTES_CHANGELOG_URL = "https://docs.veritrix.xyz/changelog";

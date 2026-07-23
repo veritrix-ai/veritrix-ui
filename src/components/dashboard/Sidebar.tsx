@@ -34,7 +34,7 @@ const primaryNav = [
 ] as const;
 
 const secondaryNav = [
-  { href: "https://docs.veritrix.ai", label: "Docs", icon: BookOpen, external: true },
+  { href: "https://docs.veritrix.xyz/", label: "Docs", icon: BookOpen, external: true },
 ] as const;
 
 function isPathActive(pathname: string, href: string) {

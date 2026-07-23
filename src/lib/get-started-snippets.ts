@@ -1,5 +1,5 @@
-const GITHUB_REPO = "AgentOps-AI/agentops";
-const DEFAULT_BRANCH = "main";
+const GITHUB_REPO = "veritrix-ai/veritrix-sdk";
+const DEFAULT_BRANCH = "master";
 
 export function getIngestUrl(): string {
   return import.meta.env.VITE_INGEST_URL ?? "http://localhost:8001";
@@ -10,18 +10,18 @@ export function getColabNotebookUrl(notebookPath: string): string {
 }
 
 export function buildExistingCodebaseSnippet(apiKey: string): string {
-  return `pip install "git+https://github.com/${GITHUB_REPO}.git#subdirectory=sdk"
+  return `pip install "git+https://github.com/${GITHUB_REPO}.git"
 
-import agentops as veritrix
+import veritrix
 
 veritrix.init(api_key="${apiKey}")`;
 }
 
 export function buildLocalQuickstartScript(apiKey: string, ingestUrl: string): string {
-  return `pip install "git+https://github.com/${GITHUB_REPO}.git#subdirectory=sdk"
+  return `pip install "git+https://github.com/${GITHUB_REPO}.git"
 
 import time
-import agentops as veritrix
+import veritrix
 
 veritrix.init(
     api_key="${apiKey}",
@@ -43,7 +43,7 @@ print("Done — check the Traces page in your Veritrix dashboard.")`;
 export function buildColabInstallExplanation(): string {
   return `Colab installs the Veritrix SDK with pip from GitHub (until it is on PyPI):
 
-!pip install -q "git+https://github.com/${GITHUB_REPO}.git#subdirectory=sdk"
+!pip install -q "git+https://github.com/${GITHUB_REPO}.git"
 
 After publish to PyPI, this becomes:
 
@@ -52,4 +52,5 @@ After publish to PyPI, this becomes:
 
 export const COLAB_NOTEBOOKS = {
   quickstart: "examples/getting_started.ipynb",
+  customerSupport: "examples/customer_support_agent.ipynb",
 } as const;

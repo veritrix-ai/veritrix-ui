@@ -206,6 +206,6 @@ export const PRICING_PLANS: PricingPlan[] = [
 
 export const EXISTING_CODEBASE_SNIPPET = `pip install "git+https://github.com/AgentOps-AI/agentops.git#subdirectory=sdk"
 
-import agentops as veritrix
+import veritrix
 
 veritrix.init(api_key="YOUR_API_KEY")`;
