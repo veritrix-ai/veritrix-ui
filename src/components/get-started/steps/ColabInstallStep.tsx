@@ -22,7 +22,7 @@ export function ColabInstallStep({
   onSwitchPath,
 }: ColabInstallStepProps) {
   const ingestUrl = getIngestUrl();
-  const colabUrl = getColabNotebookUrl(COLAB_NOTEBOOKS.quickstart);
+  const colabUrl = getColabNotebookUrl(COLAB_NOTEBOOKS.customerSupport);
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -45,7 +45,7 @@ export function ColabInstallStep({
           <div>
             <h3 className="text-sm font-semibold text-foreground">1. Open the notebook</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              The notebook installs the SDK and sends a sample trace to Veritrix.
+              The notebook installs the SDK and runs an airline customer-support multi-agent demo.
             </p>
             <a
               href={colabUrl}
@@ -63,8 +63,9 @@ export function ColabInstallStep({
             <h3 className="text-sm font-semibold text-foreground">2. Your API key</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               Paste this into the notebook&apos;s{" "}
-              <code className="rounded bg-muted px-1">AGENTOPS_API_KEY</code> field when Colab
-              prompts you.
+              <code className="rounded bg-muted px-1">VERITRIX_API_KEY</code> field when Colab
+              prompts you. You will also need an{" "}
+              <code className="rounded bg-muted px-1">OPENAI_API_KEY</code>.
             </p>
             <ApiKeyField apiKey={apiKey} className="mt-3" />
           </div>
@@ -84,7 +85,7 @@ export function ColabInstallStep({
               Colab cannot reach <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/60">localhost</code>.
               Expose your ingest API with a tunnel (e.g.{" "}
               <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/60">ngrok http 8001</code>) and set{" "}
-              <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/60">AGENTOPS_ENDPOINT</code> in the
+              <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/60">VERITRIX_ENDPOINT</code> in the
               notebook to your public URL. Default ingest URL shown here:{" "}
               <span className="font-mono">{ingestUrl}</span>
             </p>
